@@ -1,0 +1,22 @@
+{
+  "name": "dependencyjs",
+  "version": "0.0.1",
+  "description": "Virtuoso Take Home Assessment",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  },
+  "author": "Ryan Segura - Virtuoso Applicant",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.22.9",
+    "babel-jest": "^29.6.2",
+    "jest": "^29.6.2"
+  }
+}
