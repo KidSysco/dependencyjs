@@ -8,6 +8,16 @@ export default {
  */
   getItemOrderByDependency(dependencies) {
     try {
+      // Handle null ref ex.
+      if (!dependencies || dependencies.length === 0) {
+        throw new ReferenceError('dependencies param cannot be null or empty for dependencyOrderResolver.getItemOrderByDependency(dependencies).');
+      }
+
+      // Ensure dependencies is a 2D array.
+      if (dependencies[0].constructor !== Array) {
+        throw new TypeError('dependencies param must be a 2D array for dependencyOrderResolver.getItemOrderByDependency(dependencies).');
+      }
+
       // Create an empty graph.
       const graph = {};
 
@@ -43,6 +53,7 @@ export default {
       const queue = [];
 
       // Find all items with an indegree of 0 (no dependencies) then add them to the queue.
+      // Performance Note: Time complexity order of (n), where n is the number of dependencies.
       for (const item in graph) {
         if (!indegree[item]) {
           queue.push(item);
@@ -51,7 +62,13 @@ export default {
 
       // Do the topological sort!
       while (queue.length > 0) {
-        // Sort the same level of dependencies alphabetically, (default sort).
+        /* 
+        Sort the same level of dependencies alphabetically, (default sort).
+
+        Performance Note: Node.js uses the Google V8 Engine which will use a quicksort algorithm for small arrays, and a merge sort algorithm for arrays with more items. 
+        
+        The time complexity for quicksort is O(n^2), but performs great for small arrays. The time complexity for merge sort is O(n*log(n)). Therefore, the time complexity for the array.sort() command in Node.js is commonly known as O(n*log(n)).
+        */
         queue.sort();
 
         // Get the current level of items from the queue.
@@ -69,17 +86,15 @@ export default {
             if (indegree[neighbor] === 0) {
               queue.push(neighbor);
 
-              // Remove neighboring indegree, no longer needed.
+              // Performance Note: Remove neighboring indegree to avoid unneeded iterations.
               delete indegree[neighbor];
             }
           }
         }
       }
 
-      // join items in the array with a new line.
       return output.join('\n');
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
